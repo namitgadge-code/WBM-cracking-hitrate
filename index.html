@@ -181,10 +181,16 @@ function render(){
   function monthRows(month, label) {
     const r1 = ROW1.map(w=>sd.writers[w]?renderCard(w,sd.writers[w][month],label,isCpi):'').filter(Boolean);
     const r2 = ROW2.map(w=>sd.writers[w]?renderCard(w,sd.writers[w][month],label,isCpi):'').filter(Boolean);
-    if(!r1.length && !r2.length) return '';
+    const allCards = [...r1, ...r2];
+    if(!allCards.length) return '';
     let h = `<div class="month-group"><div class="month-label">${label==='May'?'May 2026':'Jun 2026'}</div>`;
-    if(r1.length) h += `<div class="cards-row">${r1.join('')}</div>`;
-    if(r2.length) h += `<div class="cards-row" style="margin-top:10px">${r2.join('')}</div>`;
+    // Only split into 2 rows when 4+ writers are active
+    if(allCards.length >= 4 && r2.length) {
+      if(r1.length) h += `<div class="cards-row">${r1.join('')}</div>`;
+      if(r2.length) h += `<div class="cards-row" style="margin-top:10px">${r2.join('')}</div>`;
+    } else {
+      h += `<div class="cards-row">${allCards.join('')}</div>`;
+    }
     h += `</div>`;
     return h;
   }
